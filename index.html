@@ -65,7 +65,7 @@
             const month = String(currentDate.getMonth() + 1).padStart(2, '0');
             const day = String(currentDate.getDate()).padStart(2, '0');
     
-            return `c_${weekNumber}_${month}${day}_HN.pdf`;
+            return `c_${month}${day}.pdf`;
         }
     
         function generateUrlAndRedirect(event, isNextWeek) {
