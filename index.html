@@ -37,47 +37,45 @@
         <a href="#" class="button" id="current-week-url" onclick="generateUrlAndRedirect(event, 0)">今週のメニューをみる</a>
         <a href="#" class="button" id="next-week-url" onclick="generateUrlAndRedirect(event, 1)">来週のメニューをみる</a>
     </div>
-    <script>
-        function getWeekNumber(date) {
-            const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
-            const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
-            return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
-        }
-    
-        function getMondayOfCurrentWeek() {
-            const date = new Date();
-            const day = date.getDay();
-            const diff = date.getDate() - day + (day === 0 ? -6 : 1);
-            return new Date(date.setDate(diff));
-        }
-    
-        function getMondayOfNextWeek() {
-            const date = new Date();
-            const day = date.getDay();
-            const diff = date.getDate() - day + (day === 0 ? 1 : 8);
-            return new Date(date.setDate(diff));
-        }
-    
-        function generateFilename(baseWeekNumber, baseDate, currentDate) {
-            const weekIncrement = getWeekNumber(currentDate) - getWeekNumber(baseDate);
-            const weekNumber = (baseWeekNumber + weekIncrement).toString().padStart(3, '0');
-    
-            const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-            const day = String(currentDate.getDate()).padStart(2, '0');
-    
-            return `c_${month}${day}.pdf`;
-        }
-    
-        function generateUrlAndRedirect(event, isNextWeek) {
-            event.preventDefault();
-            const baseUrl = 'https://s3-ap-northeast-1.amazonaws.com/media.watami-takushoku.co.jp/pdf/bento/';
-            const baseWeekNumber = 51;
-            const baseDate = new Date(2023, 2, 20); // March 20, 2023
-            const currentDate = isNextWeek ? getMondayOfNextWeek() : getMondayOfCurrentWeek();
-            const filename = generateFilename(baseWeekNumber, baseDate, currentDate);
-            const url = `${baseUrl}${filename}`;
-            window.location.href = url;
-        }
-    </script>    
+	<script>
+		function getWeekNumber(date) {
+			const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+			const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+			return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+		}
+
+		function getMondayOfCurrentWeek() {
+			const date = new Date();
+			const day = date.getDay();
+			const diff = date.getDate() - day + (day === 0 ? -6 : 1); // Adjust for week starting on Monday
+			return new Date(date.setDate(diff));
+		}
+
+		function getMondayOfNextWeek() {
+			const date = new Date();
+			const day = date.getDay();
+			const diff = date.getDate() - day + (day === 0 ? 1 : 8); // Adjust for week starting on Monday
+			return new Date(date.setDate(diff));
+		}
+
+		function generateFilename(currentDate) {
+			// Extract year, month, and day components from the date
+			const year = currentDate.getFullYear().toString().slice(2); // Get last 2 digits of the year
+			const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+			const day = String(currentDate.getDate()).padStart(2, '0');
+
+			// Return the formatted filename
+			return `c_${year}${month}${day}.pdf`;
+		}
+
+		function generateUrlAndRedirect(event, isNextWeek) {
+			event.preventDefault();
+			const baseUrl = 'https://s3-ap-northeast-1.amazonaws.com/media.watami-takushoku.co.jp/pdf/bento/';
+			const currentDate = isNextWeek ? getMondayOfNextWeek() : getMondayOfCurrentWeek();
+			const filename = generateFilename(currentDate);
+			const url = `${baseUrl}${filename}`;
+			window.location.href = url;
+		}
+	</script> 
 </body>
 </html>
